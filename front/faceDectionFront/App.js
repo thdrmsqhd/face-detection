@@ -9,7 +9,14 @@ const App = () => {
       <TouchableOpacity
         style={styles.captureButton}
         onPress={() => {
-          alert('작동중');
+          axios
+            .get('http://192.168.35.17:8080/')
+            .then(({data}) => {
+              console.log(data);
+            })
+            .catch(err => {
+              console.error(err);
+            });
         }}>
         <Text>Capture</Text>
       </TouchableOpacity>
