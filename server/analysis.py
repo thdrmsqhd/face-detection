@@ -1,10 +1,10 @@
 import cv2
 import numpy as np   
-from keras.preprocessing.image import img_to_array
+from keras.utils import img_to_array
 from keras.models import load_model
 
 # Face detection XML load and trained model loading
-face_detection = cv2.CascadeClassifier('files/haarcascade_frontalface_default.xml')
+face_detection = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 emotion_classifier = load_model('files/emotion_model.hdf5', compile=False)
 EMOTIONS = ["Angry" ,"Disgusting","Fearful", "Happy", "Sad", "Surpring", "Neutral"]
 
@@ -14,7 +14,6 @@ camera = cv2.VideoCapture(0)
 while True:
     # Capture image from camera
     ret, frame = camera.read()
-    frame = ""
     # Convert color to gray scale
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     
@@ -41,19 +40,19 @@ while True:
         
         # Emotion predict
         preds = emotion_classifier.predict(roi)[0]
-        emotion_probability = np.max(preds)
-        label = EMOTIONS[preds.argmax()]
+        # emotion_probability = np.max(preds)
+        # label = EMOTIONS[preds.argmax()]
         
-        # Assign labeling
-        cv2.putText(frame, label, (fX, fY - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
-        cv2.rectangle(frame, (fX, fY), (fX + fW, fY + fH), (0, 0, 255), 2)
+        # # Assign labeling
+        # cv2.putText(frame, label, (fX, fY - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
+        # cv2.rectangle(frame, (fX, fY), (fX + fW, fY + fH), (0, 0, 255), 2)
  
-        # Label printing
-        for (i, (emotion, prob)) in enumerate(zip(EMOTIONS, preds)):
-            text = "{}: {:.2f}%".format(emotion, prob * 100)    
-            w = int(prob * 300)
-            cv2.rectangle(canvas, (7, (i * 35) + 5), (w, (i * 35) + 35), (0, 0, 255), -1)
-            cv2.putText(canvas, text, (10, (i * 35) + 23), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 2)
+        # # Label printing
+        # for (i, (emotion, prob)) in enumerate(zip(EMOTIONS, preds)):
+        #     text = "{}: {:.2f}%".format(emotion, prob * 100)    
+        #     w = int(prob * 300)
+        #     cv2.rectangle(canvas, (7, (i * 35) + 5), (w, (i * 35) + 35), (0, 0, 255), -1)
+        #     cv2.putText(canvas, text, (10, (i * 35) + 23), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 2)
 
     # Open two windows
     # Display image ("Emotion Recognition")
