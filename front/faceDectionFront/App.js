@@ -1,22 +1,48 @@
-import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useState, Platfrom} from 'react';
+import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
 
 const App = () => {
+  const [photo, setPhoto] = useState();
+
+  const createFormData = () => {
+    console.log(photo);
+    const formData = new FormData();
+
+    formData.append('photo', {
+      name: photo.fileName,
+      type: photo.type,
+      uri: photo.uri,
+    });
+    return formData;
+  };
+
+  const handleUploadPhoto = () => {
+    const fileData = createFormData();
+    console.log(fileData);
+    axios
+      .post('http://192.168.35.91:8080/', {body: JSON.stringify(fileData)})
+      .then(() => {
+        console.log('success');
+      })
+      .catch(e => console.log(e));
+  };
+
+  const runCamera = async () => {
+    const result = await launchCamera({cameraType: 'front'});
+    setPhoto(result.assets[0]);
+
+    handleUploadPhoto();
+  };
+
   return (
     <View style={styles.layout}>
-      <Text>main page</Text>
+      <Text>main page2233</Text>
       <TouchableOpacity
         style={styles.captureButton}
         onPress={() => {
-          axios
-            .get('http://192.168.35.17:8080/')
-            .then(({data}) => {
-              console.log(data);
-            })
-            .catch(err => {
-              console.error(err);
-            });
+          runCamera();
         }}>
         <Text>Capture</Text>
       </TouchableOpacity>
@@ -32,7 +58,7 @@ const styles = StyleSheet.create({
   },
   captureButton: {
     marginTop: 50,
-    borderWidth: 1,
+    borderWidth: 3,
     borderRadius: 15,
     paddingVertical: 20,
     paddingHorizontal: 50,

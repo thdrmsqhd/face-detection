@@ -50,3 +50,9 @@ python hello.py
 
 5. axios 설치
    npm install axios
+
+안면인식 패키지 설치파일
+
+pip install cmake
+pip install dlib
+pip install face_recogniation
