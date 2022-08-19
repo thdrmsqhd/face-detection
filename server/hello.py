@@ -1,17 +1,28 @@
+from unicodedata import name
 from flask import Flask, request
 from flask_cors import CORS
+import os
+from faceDection import predictEmotion
+from enum import Enum
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = './images'
+CORS(app)
 
 @app.route('/',methods=['POST'])
 def hello_world():
-    # 여기에 안면인식 정보를 받아들인다.
-    # 받아들인 안면인식 정보를 기반으로 감정을 분석한다.
-    # 분석한 감정을 응답해준다
-    # sad, happy, angry
-    body = request.json['body']
-    print(body)
-    return {'화남': '30%'}
+    
+    file = request.files.get('photo')
+    target = os.path.join(app.config['UPLOAD_FOLDER'], 'test')
+    if not os.path.isdir(target):
+        os.mkdir(target)
+    filename = file.filename
+    destination = "/".join([target, filename])
+    file.save(destination)
+    # result = predictEmotion('rn_image_picker_lib_temp_525df671-bfc2-4591-8765-a1fbd648be50.jpg')
+    result = predictEmotion(filename)
+
+    return result
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port= '8080')
